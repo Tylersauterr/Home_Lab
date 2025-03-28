@@ -1,0 +1,26 @@
+# 🛠️ Home Lab Setup
+
+This section documents how I built and configured my personal home lab environment from scratch. The goal of this setup is to enable hands-on learning in system administration, networking, and cybersecurity.
+
+---
+
+## 💻 System Overview
+
+- **Main Machine**: Windows 10 PC (used for SSH access)
+- **Server Machine**: HP Workstation running Ubuntu Server (headless setup)
+- **Network**: Private LAN using a TP-Link AX5400 Pro router
+
+---
+
+## ⚙️ Server Setup
+
+- Wiped old Windows OS and installed **Ubuntu Server (no GUI)**
+- Connected the server directly to the router via Ethernet cable
+
+---
+
+## 🌐 Static IP Configuration (Netplan)
+
+### Step 1: Identify network interface
+```bash
+ip a
