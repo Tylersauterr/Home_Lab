@@ -11,8 +11,6 @@ This repository documents the setup, configuration, and ongoing projects I build
 - 📦 **Lab Setup Guide** – Full documentation on how I set up my homelab from scratch
 - 🔐 **SSH & Networking Configs** – Static IP, SSH key-based login, firewall, etc.
 - 🧪 **Cybersecurity Projects** – Real-world experiments with VPNs, C2 frameworks, recon tools, and more
-- 📊 **System Admin Projects** – Logging, backups, monitoring, server management
-- 🧰 **Setup Scripts** – Tools and automation used to bootstrap and maintain the lab
 
 ---
 
