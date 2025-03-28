@@ -1,37 +1,37 @@
-# 🛠️ Home Lab Setup
- 
-This section documents how I built and configured my personal home lab environment from scratch. The goal of this setup is to enable hands-on learning in system administration, networking, and cybersecurity.
+# 🛠️ Tyler's Homelab Setup
+
+This is a quick breakdown of how I set up my personal homelab using an old workstation, Ubuntu Server, and a router I wired into my apartment. I use this lab to practice cybersecurity, system administration, and to just mess around with tools I wouldn’t normally run on my main PC.
 
 ---
 
-## 💻 System Overview
+## 💻 What I'm Running
 
-- **Main Machine**: Windows 10 PC (used for SSH access)
-- **Server Machine**: HP Workstation running Ubuntu Server (headless setup)
-- **Network**: Private LAN using a TP-Link AX5400 Pro router
-
----
-
-## ⚙️ Server Setup
-
-- Wiped old Windows OS and installed **Ubuntu Server (no GUI)**
-- Connected the server directly to the router via Ethernet cable
+- **Main Machine:** Windows 10 desktop (used for SSH access and general management)
+- **Server:** HP Z-series workstation running Ubuntu Server (no GUI, completely headless)
+- **Network:** TP-Link AX5400 Pro router with my own private LAN (separate from apartment Wi-Fi)
 
 ---
 
-## 🌐 Static IP Configuration (Netplan)
+## 🔧 How I Set It Up
 
-### Step 1: Identify network interface
+### Wiped the Server & Installed Ubuntu
+I took an old HP workstation that had Windows on it, wiped the drive, and installed the latest version of **Ubuntu Server**. I’m running it totally headless — no monitor, keyboard, or GUI.
+
+---
+
+### Set a Static IP Using Netplan
+
+After installation, I gave the server a static IP so I could always SSH into it without having to check DHCP leases.
+
 ```bash
+# Get interface name
 ip a
-```
 
-### Step 2: Edit Netplan config
-```bash
+# Edit the Netplan config
 sudo nano /etc/netplan/50-cloud-init.yaml
 ```
 
-### Configuration Used:
+**Example Config:**
 ```yaml
 network:
   version: 2
@@ -39,37 +39,34 @@ network:
     enp1s0:
       dhcp4: no
       addresses:
-        - address.used.here/24
+        - 192.168.0.150/24
       routes:
         - to: default
-          via: gateway.used.here
+          via: 192.168.0.1
       nameservers:
         addresses:
           - 1.1.1.1
           - 8.8.8.8
 ```
 
-### Step 3: Apply Netplan
+Apply the config:
 ```bash
 sudo netplan apply
 ```
 
 ---
 
-## 🔐 SSH Server Setup
+### Enabled SSH Access
 
-### Install OpenSSH
+To manage the server remotely, I installed OpenSSH and made sure it starts on boot:
 ```bash
-sudo apt update && sudo apt install openssh-server -y
-```
-
-### Enable and Start SSH
-```bash
+sudo apt update
+sudo apt install openssh-server -y
 sudo systemctl enable ssh
 sudo systemctl start ssh
 ```
 
-### Open SSH Port on Firewall
+I also opened it in the firewall just in case:
 ```bash
 sudo ufw allow ssh
 sudo ufw enable
@@ -77,33 +74,58 @@ sudo ufw enable
 
 ---
 
-## 🔑 SSH Key-Based Login
+### Set Up SSH Key Login (No Passwords)
 
-### On Windows Machine:
-Generate key pair:
+On my Windows machine, I generated an SSH key:
 ```powershell
 ssh-keygen
 ```
 
-### On Ubuntu Server:
-Manually copy the public key:
+Then I copied the public key over to the server:
 ```bash
 mkdir -p ~/.ssh
 nano ~/.ssh/authorized_keys
-# Paste key here
-
+# pasted my public key
 chmod 700 ~/.ssh
 chmod 600 ~/.ssh/authorized_keys
 ```
 
+After that, I could SSH in with:
+```powershell
+ssh tyler@192.168.0.150
+```
+
+And it logs me in instantly without a password.
+
 ---
 
-## 🧰 Installed Utilities
-To assist with system monitoring, diagnostics, and management:
+## 🧰 Some Utilities I Installed
+
+Just some basics I always like to have available:
 ```bash
 sudo apt install htop git curl net-tools neofetch unzip tmux ufw fail2ban -y
 ```
 
 ---
 
-This setup provides the foundation for all future sysadmin and cybersecurity projects in my homelab. For ongoing project documentation, check out the `/projects` or root README for more.
+## ✅ Current Status
+
+- ✅ Ubuntu Server is up and running with a static IP
+- ✅ Fully headless — I only access it over SSH
+- ✅ SSH key-based login is set up
+- ✅ Router is locked down and running a private network just for the lab
+
+---
+
+## 💡 What's Next?
+
+I'll be using this server for a bunch of projects, including:
+- Running WireGuard as a personal VPN
+- Deploying logging & monitoring tools (rsyslog, ELK stack, etc.)
+- Hosting vulnerable VMs for pentesting practice
+- Doing local network recon and packet analysis
+- Possibly turning it into a small SOC simulation
+
+---
+
+If you want to see updates or follow along with what I’m building in the lab, I’ll be documenting each project in this repo as I go.
