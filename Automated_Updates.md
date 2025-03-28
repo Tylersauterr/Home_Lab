@@ -64,7 +64,7 @@ localhost ansible_connection=local
 #!/bin/bash
 
 # Smart Ansible Update Runner
-# Only runs if uptime is greater than 3 hours (adjust as needed)
+# Only runs if uptime is greater than 3 hours
 
 MIN_UPTIME_HOURS=3
 LOG_FILE="$HOME/ansible/smart_update.log"
