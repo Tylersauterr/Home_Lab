@@ -20,7 +20,7 @@ This repository documents the setup, configuration, and ongoing projects I build
 
 - **Ubuntu Server (headless)**
 - **TP-Link AX5400 Pro Router** (dedicated private LAN)
-- **SSH Access** from a Windows 11 main machine
+- **SSH Access** from a Windows 10 main machine
 - **Static IP Configuration**
 - **SSH key-based authentication**
 - **Firewall hardening & Fail2Ban**
