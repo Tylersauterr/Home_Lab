@@ -1,5 +1,5 @@
 # 🛠️ Home Lab Setup
-
+ 
 This section documents how I built and configured my personal home lab environment from scratch. The goal of this setup is to enable hands-on learning in system administration, networking, and cybersecurity.
 
 ---
