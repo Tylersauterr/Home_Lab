@@ -90,7 +90,7 @@ Manually copy the public key:
 ```bash
 mkdir -p ~/.ssh
 nano ~/.ssh/authorized_keys
-# Paste your public key here
+# Paste key here
 
 chmod 700 ~/.ssh
 chmod 600 ~/.ssh/authorized_keys
