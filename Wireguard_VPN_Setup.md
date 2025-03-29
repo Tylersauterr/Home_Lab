@@ -67,7 +67,7 @@ sudo ufw enable
 In your router admin panel:
 - External/Internal Port: `51820`
 - Protocol: `UDP`
-- IP: Your Ubuntu server's LAN IP (e.g. `192.168.0.150`)
+- IP: Your server's LAN IP 
 
 ### 8. Setup Windows Client
 ```ini
