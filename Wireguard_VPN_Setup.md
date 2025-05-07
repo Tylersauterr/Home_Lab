@@ -125,5 +125,3 @@ sudo systemctl stop systemd-resolved
 - Extend to mobile devices with WireGuard app.
 
 ---
-
-If you're reading this and trying to build your own setup, keep pushing through the frustrating parts—it clicks eventually.
