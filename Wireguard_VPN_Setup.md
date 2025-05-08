@@ -85,17 +85,17 @@ PersistentKeepalive = 25
 
 ---
 
-## 🔍 Issues Faced & Troubleshooting
+##  Issues Faced & Troubleshooting
 
-### ❌ DNS Lookups Failed
+###  DNS Lookups Failed
 - **Problem:** I could ping IPs but couldn’t resolve domains (e.g., google.com).
 - **Fix:** Installed and configured Unbound for DNS resolution. Verified with `dig` and opened port 53 via UFW.
 
-### ❌ Couldn’t Access the Internet
+###  Couldn’t Access the Internet
 - **Problem:** VPN tunnel was up, but no browser access.
 - **Fix:** IP forwarding was set up, but the UFW config was blocking traffic. Adjusted UFW rules to allow DNS and NAT forwarding.
 
-### ❌ Unbound Wouldn’t Start
+###  Unbound Wouldn’t Start
 - **Problem:** Unbound conflicted with systemd-resolved on port 53.
 - **Fix:** Disabled systemd-resolved to free up port 53:
 ```bash
@@ -105,21 +105,21 @@ sudo systemctl stop systemd-resolved
 
 ---
 
-## 📈 Outcome
+##  Outcome
 - I can securely tunnel into my home network from anywhere.
 - DNS is resolved locally through Unbound.
 - Client has internet access over VPN.
 
 ---
 
-## 📌 Key Takeaways
+##  Key Takeaways
 - Learned how to work with iptables NAT and UFW simultaneously.
 - Understood WireGuard’s public key infrastructure.
 - Gained confidence in DNS, NAT, and port forwarding concepts.
 
 ---
 
-## 🔐 Next Steps
+##  Next Steps
 - Use VPN for remote SSH and internal service access.
 - Create monitoring and logging dashboard.
 - Extend to mobile devices with WireGuard app.
