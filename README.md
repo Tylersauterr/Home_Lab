@@ -6,11 +6,11 @@ This repository documents the setup, configuration, and ongoing projects I build
 
 ---
 
-## 🚀 What's in This Repo
+## What's in This Repo
 
-- 📦 **Lab Setup Guide** – Full documentation on how I set up my homelab from scratch
-- 🔐 **SSH & Networking Configs** – Static IP, SSH key-based login, firewall, etc.
-- 🧪 **Cybersecurity Projects** – Real-world experiments with VPNs, C2 frameworks, recon tools, and more
+-  **Lab Setup Guide** – Full documentation on how I set up my homelab from scratch
+-  **SSH & Networking Configs** – Static IP, SSH key-based login, firewall, etc.
+-  **Cybersecurity Projects** – Real-world experiments with VPNs, C2 frameworks, recon tools, and more
 
 ---
 
