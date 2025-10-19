@@ -1,103 +1,99 @@
 # WireGuard VPN Setup for Home Lab
 
-This project documents the process of setting up a **WireGuard VPN server** on my headless Ubuntu home lab system. The goal was to securely access my private network and services from outside my local environment. The VPN tunnel allows me to SSH into my lab and eventually route traffic through it. This was one of the more technical projects I’ve completed from scratch and a great learning experience.
+This project documents the process of setting up a WireGuard VPN server on a headless Ubuntu system in my home lab. The goal was to create a secure, encrypted tunnel for remote access to internal lab resources and services while maintaining network isolation from the main home network. The project provided hands-on experience with VPN configuration, key management, and network routing.
 
 ---
 
-## 🖥️ System Overview
+## System Overview
 
-**Server:** HP Workstation running Ubuntu Server (no GUI)  
-**Client:** Windows 10 machine (main daily driver)  
-**Router:** TP-Link AX5400 Pro  
+**Server:** Linux host (headless Ubuntu Server)  
+**Client:** Windows workstation  
+**Router:** Consumer-grade router supporting custom port forwarding  
 **VPN Software:** [WireGuard](https://www.wireguard.com/)  
-**DNS Server:** Unbound (for private recursive DNS resolution)
+**DNS Service:** Local recursive resolver (Unbound)
 
 ---
 
-## ✅ Setup Steps
+## Setup Summary
 
-### 1. Install WireGuard on the Server
+### 1. Install WireGuard
 ```bash
 sudo apt update && sudo apt install wireguard -y
 ```
 
-### 2. Generate Keys
+### 2. Generate Key Pairs
 ```bash
 wg genkey | tee server_private.key | wg pubkey > server_public.key
 wg genkey | tee client_private.key | wg pubkey > client_public.key
 ```
 
-### 3. Configure `wg0.conf`
+### 3. Configure the Server Interface
 File: `/etc/wireguard/wg0.conf`
 ```ini
 [Interface]
-Address = 10.0.0.1/24
+Address = <private_subnet_address>
 SaveConfig = true
-ListenPort = 51820
+ListenPort = <vpn_port>
 PrivateKey = <server_private_key>
 
 [Peer]
 PublicKey = <client_public_key>
-AllowedIPs = 10.0.0.2/32
+AllowedIPs = <client_ip_or_subnet>
 ```
 
 ### 4. Enable IP Forwarding
 ```bash
 sudo nano /etc/sysctl.conf
-# Ensure this line is uncommented:
+# Uncomment:
 net.ipv4.ip_forward=1
 sudo sysctl -p
 ```
 
-### 5. Add MASQUERADE Rule
+### 5. Set Up NAT for Outbound Traffic
 ```bash
-sudo iptables -t nat -A POSTROUTING -o enp1s0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o <network_interface> -j MASQUERADE
 ```
 
-### 6. Allow Necessary Ports with UFW
+### 6. Adjust Firewall Rules
+Example (UFW):
 ```bash
-sudo ufw allow 22/tcp
-sudo ufw allow 51820/udp
-sudo ufw allow 53
-sudo ufw allow 53/udp
+sudo ufw allow <ssh_port>/tcp
+sudo ufw allow <vpn_port>/udp
 sudo ufw enable
 ```
 
-### 7. Port Forwarding on Router
-In your router admin panel:
-- External/Internal Port: `51820`
-- Protocol: `UDP`
-- IP: Your server's LAN IP 
+### 7. Configure Port Forwarding on the Router
+Forward UDP traffic from your external interface to the VPN port on the server’s internal IP address.
 
-### 8. Setup Windows Client
+### 8. Create Client Configuration
 ```ini
 [Interface]
 PrivateKey = <client_private_key>
-Address = 10.0.0.2/24
-DNS = 10.0.0.1
+Address = <client_vpn_ip>
+DNS = <internal_dns_ip>
 
 [Peer]
 PublicKey = <server_public_key>
-Endpoint = <your_public_ip>:51820
+Endpoint = <public_ip_or_ddns>:<vpn_port>
 AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 25
 ```
 
 ---
 
-##  Issues Faced & Troubleshooting
+## Issues and Fixes
 
-###  DNS Lookups Failed
-- **Problem:** I could ping IPs but couldn’t resolve domains (e.g., google.com).
-- **Fix:** Installed and configured Unbound for DNS resolution. Verified with `dig` and opened port 53 via UFW.
+**DNS Lookups Failed**  
+- Cause: The system could ping IPs but not resolve domains.  
+- Fix: Configured Unbound for local DNS recursion and allowed traffic on the DNS port.
 
-###  Couldn’t Access the Internet
-- **Problem:** VPN tunnel was up, but no browser access.
-- **Fix:** IP forwarding was set up, but the UFW config was blocking traffic. Adjusted UFW rules to allow DNS and NAT forwarding.
+**No Internet Access Through VPN**  
+- Cause: Forwarding rules blocked outbound traffic.  
+- Fix: Enabled NAT via iptables and confirmed UFW forwarding rules.
 
-###  Unbound Wouldn’t Start
-- **Problem:** Unbound conflicted with systemd-resolved on port 53.
-- **Fix:** Disabled systemd-resolved to free up port 53:
+**Unbound Conflict**  
+- Cause: systemd-resolved occupied port 53.  
+- Fix: Disabled systemd-resolved to free the port.
 ```bash
 sudo systemctl disable systemd-resolved
 sudo systemctl stop systemd-resolved
@@ -105,23 +101,21 @@ sudo systemctl stop systemd-resolved
 
 ---
 
-##  Outcome
-- I can securely tunnel into my home network from anywhere.
-- DNS is resolved locally through Unbound.
-- Client has internet access over VPN.
+## Outcome
+- Secure remote access to the home lab network.  
+- Local DNS resolution through a private resolver.  
+- Successful routing of client traffic through the VPN tunnel.
 
 ---
 
-##  Key Takeaways
-- Learned how to work with iptables NAT and UFW simultaneously.
-- Understood WireGuard’s public key infrastructure.
-- Gained confidence in DNS, NAT, and port forwarding concepts.
+## Key Takeaways
+- Learned how to configure and route traffic through WireGuard.  
+- Gained practical experience with key-based authentication.  
+- Improved understanding of NAT, UFW, and DNS recursion.  
 
 ---
 
-##  Next Steps
-- Use VPN for remote SSH and internal service access.
-- Create monitoring and logging dashboard.
-- Extend to mobile devices with WireGuard app.
-
----
+## Next Steps
+- Extend VPN access to additional devices (mobile and laptop).  
+- Add VPN usage monitoring and logging.  
+- Integrate with existing Prometheus/Grafana monitoring stack.
