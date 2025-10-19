@@ -1,23 +1,23 @@
-# 🔄 Automated Updates with Ansible + Cron
+# Automated Updates with Ansible and Cron
 
-As part of my personal homelab project, I automated system updates on my Ubuntu server using Ansible and cron. This setup checks how long the server has been running, and only performs updates if it's been online long enough to ensure everything has properly booted.
-
----
-
-## ⚙️ Goal
-Automate system updates without running them immediately after boot — and ensure updates only happen when the server has been up and stable for a set amount of time.
+This project automates package updates on a headless Ubuntu server using Ansible and a cron job. The configuration ensures that updates only run after the system has been online long enough to guarantee stable uptime, avoiding unnecessary update runs right after a reboot.
 
 ---
 
-## 🛠️ What I Built
-- A custom Ansible playbook to update packages
-- A smart Bash script that checks system uptime before running updates
-- A cron job that runs this script every 2 hours
-- A logging system to keep track of update activity
+## Goal
+Automate system updates in a reliable, low-maintenance way, while preventing update runs immediately after boot. Updates are triggered on a schedule only when the system has been up for a defined period.
 
 ---
 
-## 📁 File Structure
+## Overview
+- Custom Ansible playbook to perform updates
+- Bash script that checks system uptime before running updates
+- Cron job to trigger the script every 12 hours
+- Logging to record when updates are skipped or executed
+
+---
+
+## File Structure
 ```
 ~/ansible/
 ├── inventory.ini
@@ -29,7 +29,7 @@ Automate system updates without running them immediately after boot — and ensu
 
 ---
 
-## 📦 Ansible Playbook: `update.yml`
+## Ansible Playbook — `update.yml`
 ```yaml
 ---
 - name: Update and upgrade packages
@@ -51,7 +51,7 @@ Automate system updates without running them immediately after boot — and ensu
 
 ---
 
-## 🔐 Ansible Inventory: `inventory.ini`
+## Ansible Inventory — `inventory.ini`
 ```ini
 [homelab]
 localhost ansible_connection=local
@@ -59,14 +59,14 @@ localhost ansible_connection=local
 
 ---
 
-## 🧠 Smart Bash Script: `smart_update.sh`
+## Bash Script — `smart_update.sh`
 ```bash
 #!/bin/bash
 
 # Smart Ansible Update Runner
-# Only runs if uptime is greater than 3 hours
+# Only runs if uptime is greater than 12 hours
 
-MIN_UPTIME_HOURS=3
+MIN_UPTIME_HOURS=12
 LOG_FILE="$HOME/ansible/smart_update.log"
 PLAYBOOK_PATH="$HOME/ansible/playbooks/update.yml"
 INVENTORY_PATH="$HOME/ansible/inventory.ini"
@@ -85,33 +85,29 @@ else
 fi
 ```
 
-Make sure the script is executable:
+Make the script executable:
 ```bash
 chmod +x ~/ansible/smart_update.sh
 ```
 
 ---
 
-## 📆 Cron Setup
-Run the script every 2 hours:
+## Cron Configuration
+To run the update script every 12 hours, open the cron configuration:
 ```bash
 crontab -e
 ```
-Add:
+Add the following entry:
 ```cron
-0 */2 * * * ~/ansible/smart_update.sh
+0 */12 * * * ~/ansible/smart_update.sh
 ```
 
 ---
 
-## ✅ Result
-Now my system:
-- Checks uptime every 2 hours
-- Runs updates only if it's been up for 3+ hours
-- Logs everything to `smart_update.log`
-- Stays clean, updated, and self-maintaining — even when I forget
-
----
-
-This setup is part of my broader homelab project to automate and self-manage my server like a true sysadmin. More projects will be added as I keep building!
+## Result
+The automation now:
+- Checks system uptime every 12 hours  
+- Runs updates only if the system has been online for 12+ hours  
+- Logs every decision and result to `smart_update.log`  
+- Keeps the system updated without manual maintenance or risk of conflicts during early boot  
 
